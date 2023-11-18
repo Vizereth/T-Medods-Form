@@ -6,9 +6,9 @@
       </p>
       <p
         v-if="state.submitSuccess && state.formSubmitted && !$v.$invalid"
-        class="success success-big"
+        class="success success--big"
       >
-        Форма отправлена успешно!
+        Клиент успешно создан!
       </p>
     </div>
     <!-- Форма -->
@@ -69,7 +69,7 @@
               type="tel"
               id="phone"
               v-model="state.phone"
-              pattern="/+7[0-9]{10}/"
+              pattern="/^\+7\d{10}$/"
               maxlength="12"
               class="form__input"
             />
@@ -161,7 +161,7 @@
 
           <!-- Пол -->
           <div class="form__field">
-            <label for="gender" class="form__label">Пол*:</label>
+            <label for="gender" class="form__label">Пол:</label>
             <div class="form__radio-wrapper">
               <div class="form__radio-field">
                 <input
@@ -182,14 +182,6 @@
                 <label for="female">Женщина</label>
               </div>
             </div>
-            <p
-              v-if="
-                state.formSubmitted && !$v.gender.$pending && $v.gender.$invalid
-              "
-              class="error"
-            >
-              Выберите пол
-            </p>
           </div>
         </div>
 
@@ -392,7 +384,7 @@ const validateTextInput = (value) => {
 };
 
 const validatePhone = (value) => {
-  const regex = /^\\+7[0-9]{10}$/;
+  const regex = /^\+7\d{10}$/;
   return regex.test(value);
 };
 
@@ -473,7 +465,7 @@ export default {
       surname: { required: validateTextInput },
       lastname: "",
       birth: { required: validateAge },
-      gender: { required },
+      gender: "",
       phone: { required: validatePhone },
       clientTypes: { required: validateClientTypes },
       activeDoctor: "",
@@ -557,6 +549,10 @@ main {
   justify-content: center;
   gap: 50px;
   padding: 50px 0;
+
+  @include maxMobileSmall {
+    padding: 25px 5px;
+  }
 }
 
 .error,
