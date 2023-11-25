@@ -1,58 +1,42 @@
 <template>
   <main>
-    <div class="messages">
-      <p v-if="state.formSubmitted && $v.$invalid" class="error error--big">
-        Заполните все обязательные поля
-      </p>
-      <p
-        v-if="state.submitSuccess && state.formSubmitted && !$v.$invalid"
-        class="success success--big"
-      >
-        Клиент успешно создан!
-      </p>
-    </div>
     <!-- Форма -->
-    <form
-      v-if="!state.submitSuccess"
-      @submit.prevent="submitForm"
-      class="form"
-      novalidate
-    >
+    <form class="form" novalidate>
       <!--------------------- Личные данные --------------------->
       <div class="form__section">
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Фамилия -->
           <div class="form__field">
             <label for="surname" class="form__label">Фамилия*: </label>
             <input v-model="state.surname" name="surname" class="form__input" />
-            <p
-              v-if="
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted &&
                 !$v.surname.$pending &&
                 $v.surname.$invalid
               "
-              class="error"
-            >
-              Заполните поле
-            </p>
+              size="small"
+              text="Это поле обязательно для заполнения"
+            />
           </div>
 
           <!-- Имя -->
           <div class="form__field">
             <label for="name" class="form__label">Имя*: </label>
             <input v-model="state.name" name="name" class="form__input" />
-            <p
-              v-if="
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted && !$v.name.$pending && $v.name.$invalid
               "
-              class="error"
-            >
-              Заполните поле
-            </p>
+              size="small"
+              text="Это поле обязательно для заполнения"
+            />
           </div>
         </div>
 
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Отчество -->
           <div class="form__field">
             <label for="lastname" class="form__label">Отчество: </label>
@@ -73,96 +57,95 @@
               maxlength="12"
               class="form__input"
             />
-            <p
-              v-if="
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted && !$v.phone.$pending && $v.phone.$invalid
               "
-              class="error"
-            >
-              Введите номер телефона
-            </p>
+              size="small"
+              text="Это поле обязательно для заполнения"
+            />
           </div>
         </div>
 
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Дата рождения -->
           <div class="form__field">
             <label for="birth" class="form__label">Дата рождения*: </label>
-            <input
-              type="date"
-              v-model="state.birth"
-              name="birth"
-              class="form__input"
-            />
-            <p
-              v-if="
+            <div class="form__input-container">
+              <input
+                type="date"
+                v-model="state.birth"
+                name="birth"
+                class="form__input"
+              />
+            </div>
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted && !$v.birth.$pending && $v.birth.$invalid
               "
-              class="error"
-            >
-              Заполните поле
-            </p>
-          </div>
-
-          <!-- Врач -->
-          <div class="form__field">
-            <label for="activeDoctor" class="form__label">Лечащий врач: </label>
-            <select
-              v-model="state.activeDoctor"
-              name="activeDoctor"
-              class="form__select"
-            >
-              <option value="ivanov" class="">Иванов</option>
-              <option value="zaharov" class="">Захаров</option>
-              <option value="chernisheva" class="">Чернышева</option>
-            </select>
+              size="small"
+              text="Выберите дату рождения"
+            />
           </div>
         </div>
 
-        <div class="form__field-wrapper">
+        <!-- Врач -->
+        <div class="form__field">
+          <label for="activeDoctor" class="form__label">Лечащий врач: </label>
+          <CustomSelect
+            :options="['Иванов', 'Захаров', 'Чернышева']"
+            @update:selectedOption="handleSelectedDoctor"
+          />
+        </div>
+
+        <div class="form__group">
           <!-- Группа клиентов -->
           <div class="form__field">
             <label class="form__label">Группа клиентов*:</label>
-            <label class="form__chkbox-label">
-              <input
-                type="checkbox"
-                value="vip"
-                v-model="state.clientTypes.vip"
-              />
-              <span>VIP</span>
-            </label>
-            <label class="form__chkbox-label">
-              <input
-                type="checkbox"
-                value="problematic"
-                v-model="state.clientTypes.problematic"
-              />
-              <span>Проблемные</span>
-            </label>
-            <label class="form__chkbox-label">
-              <input
-                type="checkbox"
-                value="oms"
-                v-model="state.clientTypes.oms"
-              />
-              <span>ОМС</span>
-            </label>
-            <p
-              v-if="
+            <div class="form__options-container">
+              <label class="form__chkbox-label">
+                <input
+                  type="checkbox"
+                  value="vip"
+                  v-model="state.clientTypes.vip"
+                />
+                <span>VIP</span>
+              </label>
+              <label class="form__chkbox-label">
+                <input
+                  type="checkbox"
+                  value="problematic"
+                  v-model="state.clientTypes.problematic"
+                />
+                <span>Проблемные</span>
+              </label>
+              <label class="form__chkbox-label">
+                <input
+                  type="checkbox"
+                  value="oms"
+                  v-model="state.clientTypes.oms"
+                />
+                <span>ОМС</span>
+              </label>
+            </div>
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted &&
                 !$v.clientTypes.$pending &&
                 $v.clientTypes.$invalid
               "
-              class="error"
-            >
-              Выберите группу
-            </p>
+              size="small"
+              text="Выберите хотя бы одну группу"
+            />
           </div>
 
           <!-- Пол -->
           <div class="form__field">
             <label for="gender" class="form__label">Пол:</label>
-            <div class="form__radio-wrapper">
+            <div class="form__options-container">
               <div class="form__radio-field">
                 <input
                   type="radio"
@@ -196,7 +179,7 @@
 
       <!--------------------- Адрес --------------------->
       <div class="form__section">
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Страна -->
           <div class="form__field">
             <label for="country" class="form__label">Страна: </label>
@@ -220,7 +203,7 @@
           </div>
         </div>
 
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Город -->
           <div class="form__field">
             <label for="city" class="form__label">Город*: </label>
@@ -230,14 +213,14 @@
               id="city"
               class="form__input"
             />
-            <p
-              v-if="
+            <VueMessage
+              type="error"
+              :isVisible="
                 state.formSubmitted && !$v.city.$pending && $v.city.$invalid
               "
-              class="error"
-            >
-              Заполните поле
-            </p>
+              size="small"
+              text="Это поле обязательно для заполнения"
+            />
           </div>
 
           <!-- Улица -->
@@ -252,7 +235,7 @@
           </div>
         </div>
 
-        <div class="form__field-wrapper">
+        <div class="form__group">
           <!-- Дом -->
           <div class="form__field">
             <label for="building" class="form__label">Дом: </label>
@@ -278,61 +261,52 @@
 
       <!--------------------- Паспорт --------------------->
       <div class="form__section">
-        <div class="form__field-wrapper">
-          <!-- Тип документа -->
-          <div class="form__field">
-            <label for="document" class="form__label">Тип документа*: </label>
-            <select
-              v-model="state.document"
-              name="document"
-              id="document"
-              class="form__select"
-            >
-              <option value="passport" class="form__option">Паспорт</option>
-              <option value="birth-certificate" class="form__option">
-                Свидетельство о рождении
-              </option>
-              <option value="drivers-licence" class="form__option">
-                Вод. удостоверение
-              </option>
-            </select>
-            <p
-              v-if="
-                state.formSubmitted &&
-                !$v.document.$pending &&
-                $v.document.$invalid
-              "
-              class="error"
-            >
-              Выберите документ
-            </p>
-          </div>
-          <!-- дата выдачи -->
-          <div class="form__field">
-            <label for="document-date" class="form__label"
-              >Дата выдачи*:
-            </label>
-            <input
-              type="date"
-              v-model="state.documentDate"
-              name="document-date"
-              id="document-date"
-              class="form__input"
-            />
-            <p
-              v-if="
-                state.formSubmitted &&
-                !$v.documentDate.$pending &&
-                $v.documentDate.$invalid
-              "
-              class="error"
-            >
-              Заполните поле
-            </p>
-          </div>
+        <!-- Тип документа -->
+        <div class="form__field">
+          <label for="document" class="form__label">Тип документа*: </label>
+          <CustomSelect
+            :options="[
+              'Паспорт',
+              'Свидетельство о рождении',
+              'Вод. удостоверение',
+            ]"
+            @update:selectedOption="handleSelectedDocument"
+          />
+          <VueMessage
+            type="error"
+            :isVisible="
+              state.formSubmitted &&
+              !$v.document.$pending &&
+              $v.document.$invalid
+            "
+            size="small"
+            text="Выберите тип документа"
+          />
         </div>
 
-        <div class="form__field-wrapper">
+        <!-- дата выдачи -->
+        <div class="form__field">
+          <label for="document-date" class="form__label">Дата выдачи*: </label>
+          <input
+            type="date"
+            v-model="state.documentDate"
+            name="document-date"
+            id="document-date"
+            class="form__input"
+          />
+          <VueMessage
+            type="error"
+            :isVisible="
+              state.formSubmitted &&
+              !$v.documentDate.$pending &&
+              $v.documentDate.$invalid
+            "
+            size="small"
+            text="Выберите дату выдачи"
+          />
+        </div>
+
+        <div class="form__group">
           <!-- Серия -->
           <div class="form__field">
             <label for="passport-series" class="form__label">Серия: </label>
@@ -368,49 +342,69 @@
         </div>
       </div>
 
-      <!-- Отправить -->
-      <button type="submit" class="form__submit">Отправить</button>
+      <!-- Кнопки -->
+      <button
+        v-if="!state.submitSuccess && $v.$invalid"
+        type="submit"
+        class="form__btn form__btn--submit"
+        @click="submitForm()"
+      >
+        Создать клиента
+      </button>
+      <button
+        v-if="state.formSubmitted && state.submitSuccess && !$v.$invalid"
+        type="button"
+        class="form__btn form__btn--new"
+        @click.prevent="newForm()"
+      >
+        Новый клиент
+      </button>
+
+      <div class="form__section">
+        <div class="messages">
+          <div
+            v-if="!state.submitSuccess && state.formSubmitted && $v.$invalid"
+          >
+            <VueMessage
+              type="error"
+              :isVisible="true"
+              size="big"
+              text="Заполните все обязательные поля"
+            />
+          </div>
+          <div
+            v-if="state.submitSuccess && state.formSubmitted && !$v.$invalid"
+          >
+            <VueMessage
+              type="success"
+              :isVisible="true"
+              size="big"
+              text="Клиент успешно создан!"
+            />
+          </div>
+        </div>
+      </div>
     </form>
   </main>
 </template>
 
 <script>
-import { reactive, toRefs } from "@vue/composition-api";
+import { reactive } from "@vue/composition-api";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
+import {
+  validateTextInput,
+  validatePhoneNumber,
+  validateClientTypes,
+} from "../utils/validators";
 
-const validateTextInput = (value) => {
-  return value !== undefined && value !== "";
-};
-
-const validatePhone = (value) => {
-  const regex = /^\+7\d{10}$/;
-  return regex.test(value);
-};
-
-const validateAge = (value) => {
-  const currentDate = new Date();
-  const birthDate = new Date(value);
-  const ageDifference = currentDate.getFullYear() - birthDate.getFullYear();
-
-  if (
-    currentDate.getMonth() < birthDate.getMonth() ||
-    (currentDate.getMonth() === birthDate.getMonth() &&
-      currentDate.getDate() < birthDate.getDate())
-  ) {
-    return ageDifference - 1 >= 18;
-  } else {
-    return ageDifference >= 18;
-  }
-};
-
-const validateClientTypes = (value) => {
-  return Object.values(value).some((item) => item === true);
-};
+import VueMessage from "./VueMessage.vue";
+import CustomSelect from "./CustomSelect.vue";
 
 export default {
+  components: { VueMessage, CustomSelect },
   setup() {
-    const state = reactive({
+    const initialState = {
       name: "",
       surname: "",
       lastname: "",
@@ -419,7 +413,7 @@ export default {
       phone: "+7",
       clientTypes: { vip: false, problematic: false, oms: false },
       activeDoctor: "",
-      sms: "",
+      sms: false,
       zipcode: "",
       country: "",
       region: "",
@@ -433,83 +427,117 @@ export default {
       documentDate: "",
       formSubmitted: false,
       submitSuccess: false,
-    });
-
-    const {
-      name,
-      surname,
-      lastname,
-      birth,
-      gender,
-      phone,
-      clientTypes,
-      activeDoctor,
-      sms,
-      zipcode,
-      country,
-      region,
-      city,
-      street,
-      building,
-      document,
-      passportSeries,
-      passportNumber,
-      documentGivenBy,
-      documentDate,
-      formSubmitted, // eslint-disable-line no-unused-vars
-      submitSuccess, // eslint-disable-line no-unused-vars
-    } = toRefs(state);
-
-    const rules = {
-      name: { required: validateTextInput },
-      surname: { required: validateTextInput },
-      lastname: "",
-      birth: { required: validateAge },
-      gender: "",
-      phone: { required: validatePhone },
-      clientTypes: { required: validateClientTypes },
-      activeDoctor: "",
-      sms: "",
-      zipcode: "",
-      country: "",
-      region: "",
-      city: { required: validateTextInput },
-      street: "",
-      building: "",
-      document: { required },
-      passportSeries: "",
-      passportNumber: "",
-      documentGivenBy: "",
-      documentDate: { required },
     };
 
-    const $v = useVuelidate(rules, {
-      name,
-      surname,
-      lastname,
-      birth,
-      gender,
-      phone,
-      clientTypes,
-      activeDoctor,
-      sms,
-      zipcode,
-      country,
-      region,
-      city,
-      street,
-      building,
-      document,
-      passportSeries,
-      passportNumber,
-      documentGivenBy,
-      documentDate,
-    });
+    const state = reactive(initialState);
+
+    const ruleKeys = [
+      "name",
+      "surname",
+      "lastname",
+      "birth",
+      "gender",
+      "phone",
+      "clientTypes",
+      "activeDoctor",
+      "sms",
+      "zipcode",
+      "country",
+      "region",
+      "city",
+      "street",
+      "building",
+      "document",
+      "passportSeries",
+      "passportNumber",
+      "documentGivenBy",
+      "documentDate",
+    ];
+
+    const createRules = () => {
+      const newRules = ruleKeys.reduce((acc, key) => {
+        acc[key] = required;
+        return acc;
+      }, {});
+
+      newRules.name = { required: validateTextInput };
+      newRules.surname = { required: validateTextInput };
+      newRules.birth = { required };
+      newRules.phone = { required: validatePhoneNumber };
+      newRules.clientTypes = { required: validateClientTypes };
+      newRules.city = { required: validateTextInput };
+      newRules.document = { required };
+      newRules.documentDate = { required };
+
+      return newRules;
+    };
+
+    const rules = createRules();
+
+    const $v = useVuelidate(rules, state);
+
+    const handleSelectedDoctor = (option) => {
+      state.activeDoctor = option;
+    };
+
+    const handleSelectedDocument = (option) => {
+      state.document = option;
+    };
+
+    const newForm = () => {
+      state.name = "";
+      state.surname = "";
+      state.lastname = "";
+      state.birth = "";
+      state.gender = "";
+      state.phone = "+7";
+      state.clientTypes = { vip: false, problematic: false, oms: false };
+      state.activeDoctor = "";
+      state.sms = false;
+      state.zipcode = "";
+      state.country = "";
+      state.region = "";
+      state.city = "";
+      state.street = "";
+      state.building = "";
+      state.document = "";
+      state.passportSeries = "";
+      state.passportNumber = "";
+      state.documentGivenBy = "";
+      state.documentDate = "";
+      state.formSubmitted = false;
+      state.submitSuccess = false;
+    };
 
     const submitForm = async () => {
       state.formSubmitted = true;
 
+      state.name = "a";
+      state.surname = "b";
+      state.lastname = "c";
+      state.birth = "d";
+      state.gender = "e";
+      state.phone = "+79999999999";
+      state.clientTypes.vip = true;
+      state.activeDoctor = "";
+      state.sms = true;
+      state.zipcode = "f";
+      state.country = "g";
+      state.region = "h";
+      state.city = "i";
+      state.street = "g";
+      state.building = "k";
+      state.document = "l";
+      state.passportSeries = "m";
+      state.passportNumber = "n";
+      state.documentGivenBy = "o";
+      state.documentDate = "p";
+
+      $v.value.$touch();
+      $v.value.$validate();
+
       if ($v.value.$invalid) {
+        state.submitSuccess = false;
         return;
       }
 
@@ -521,25 +549,20 @@ export default {
       }
     };
 
-    return { state, $v, submitForm };
+    return {
+      state,
+      $v,
+      submitForm,
+      newForm,
+      handleSelectedDoctor,
+      handleSelectedDocument,
+    };
   },
 };
 </script>
 
 <style lang="scss">
-$primaryColor: rgb(189, 153, 128);
-$secondaryColor: rgb(237, 215, 191);
-$errorColor: rgb(240, 46, 56);
-$sucessColor: #009e60;
-$transition: 100ms ease-in;
-
-$device-mobile-small: 480px; // Phone S
-
-@mixin maxMobileSmall {
-  @media screen and (max-width: $device-mobile-small) {
-    @content;
-  }
-}
+@import "../styles/variables.scss";
 
 main {
   flex: 1 1 auto;
@@ -555,45 +578,113 @@ main {
   }
 }
 
-.error,
-.success {
-  font-size: 14px;
+input,
+textarea,
+select {
+  background-color: transparent;
+  border-bottom: 1px solid $border-color;
+  color: $text-color;
+  padding: 5px 2px;
+  transition: $transition;
 
-  @include maxMobileSmall {
-    font-size: 11px;
-  }
-
-  &--big {
-    font-size: 20px;
-
-    @include maxMobileSmall {
-      font-size: 14px;
-    }
+  &:hover,
+  &:focus {
+    border-bottom: 1px solid $focus-color;
   }
 }
 
-.error {
-  color: $errorColor;
+input[type="date"],
+input[type="checkbox"],
+input[type="radio"] {
+  user-select: none;
 }
 
-.success {
-  color: $sucessColor;
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  appearance: none;
+  border: 2px solid $border-color;
+  border-radius: 2px;
+
+  &:checked {
+    border: 2px solid $focus-color;
+  }
+
+  &:checked:before {
+    content: "\2713";
+    color: $focus-color;
+    font-size: 12px;
+  }
+}
+
+input[type="radio"] {
+  appearance: none;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid $border-color;
+  border-radius: 50%;
+  position: relative;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: $focus-color;
+    display: none;
+  }
+
+  &:checked {
+    border: 2px solid $focus-color;
+  }
+
+  &:checked:before {
+    display: flex;
+  }
+}
+
+.messages {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .form {
+  @include glassmorphism;
   width: 100%;
-  max-width: 800px;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   gap: 50px;
+  padding: 50px;
+
+  @include maxMobileSmall {
+    gap: 25px;
+    padding: 20px;
+  }
 
   &__section {
     display: flex;
     flex-direction: column;
     gap: 25px;
+
+    @include maxMobileSmall {
+      gap: 20px;
+    }
   }
 
-  &__field-wrapper {
+  &__group {
     display: flex;
     flex-wrap: wrap;
     gap: 25px;
@@ -610,16 +701,23 @@ main {
     gap: 10px;
   }
 
-  &__radio-wrapper {
+  &__input-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
 
+  &__options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 5px;
+  }
+
   &__radio-field {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
     font-size: 15px;
 
     @include maxMobileSmall {
@@ -630,12 +728,13 @@ main {
   &__label {
     font-size: 16px;
 
-    @include maxMobileSmall{ 
-      font-size:13px;
+    @include maxMobileSmall {
+      font-size: 13px;
     }
   }
 
   &__chkbox-label {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -648,53 +747,25 @@ main {
 
   &__input {
     width: 100%;
-    padding: 7px;
-    border: 1px solid $primaryColor;
     font-size: 14px;
-
-    &:focus {
-      border: 1px solid rgba($primaryColor, 0.5);
-    }
-
-    @include maxMobileSmall{ 
-      font-size: 12px;
-    }
-  }
-
-  &__select {
-    border: 1px solid $primaryColor;
-    font-size: 14px;
-    font-weight: normal;
-    padding: 5px;
-
-    &:active, &:focus {
-      border: 1px solid $primaryColor;
-    }
 
     @include maxMobileSmall {
       font-size: 12px;
     }
-
-    option {
-      font-size: inherit;
-
-      @include maxMobileSmall {
-        font-size: 12px;
-        padding: 10px;
-      }
-    }
   }
 
-  &__submit {
-    background: rgba($secondaryColor, 0.5);
-    border: 1px solid $primaryColor;
-    padding: 10px;
+  &__btn {
+    @include glassmorphism;
+    padding: 12px 16px;
     margin-top: 15px;
     transition: $transition;
 
+    &--new {
+      color: $focus-color;
+    }
+
     &:hover {
-      background: rgba($secondaryColor, 0.25);
-      border: 1px solid $primaryColor;
+      opacity: 0.8;
     }
 
     @include maxMobileSmall {

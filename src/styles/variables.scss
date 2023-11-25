@@ -1,0 +1,22 @@
+$text-color: rgb(230, 230, 230);
+$border-color: #d1d1d1;
+$focus-color: #17e1ae;
+$bg-color: #2697bf;
+
+$transition: 100ms ease-in;
+
+$device-mobile-small: 480px; // Phone S
+
+@mixin glassmorphism() {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
+}
+
+@mixin maxMobileSmall {
+  @media screen and (max-width: $device-mobile-small) {
+    @content;
+  }
+}
