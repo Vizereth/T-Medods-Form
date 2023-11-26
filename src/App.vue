@@ -118,6 +118,6 @@ export default {
       transparent 4%,
       transparent 96%
     ),
-    linear-gradient(135deg, rgb(23, 233, 173), rgb(29, 24, 208));
+    linear-gradient(135deg, rgb(24, 196, 208), rgb(29, 24, 208));
 }
 </style>

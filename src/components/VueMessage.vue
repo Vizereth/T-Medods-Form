@@ -52,13 +52,17 @@ $message-color: #00ffc8;
 
   &--small {
     font-size: 12px;
+
+    @include maxMobileSmall {
+      font-size: 11px;
+    }
   }
 
   &--big {
     font-size: 16px;
 
     @include maxMobileSmall {
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 

@@ -110,6 +110,7 @@
                   type="checkbox"
                   value="vip"
                   v-model="state.clientTypes.vip"
+                  class="form__input"
                 />
                 <span>VIP</span>
               </label>
@@ -118,6 +119,7 @@
                   type="checkbox"
                   value="problematic"
                   v-model="state.clientTypes.problematic"
+                  class="form__input"
                 />
                 <span>Проблемные</span>
               </label>
@@ -126,6 +128,7 @@
                   type="checkbox"
                   value="oms"
                   v-model="state.clientTypes.oms"
+                  class="form__input"
                 />
                 <span>ОМС</span>
               </label>
@@ -152,6 +155,7 @@
                   value="male"
                   v-model="state.gender"
                   name="gender"
+                  class="form__input"
                 />
                 <label for="male">Мужчина</label>
               </div>
@@ -161,6 +165,7 @@
                   value="female"
                   v-model="state.gender"
                   name="gender"
+                  class="form__input"
                 />
                 <label for="female">Женщина</label>
               </div>
@@ -392,11 +397,13 @@
 import { reactive } from "@vue/composition-api";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
+
 import {
   validateTextInput,
   validatePhoneNumber,
   validateClientTypes,
 } from "../utils/validators";
+import { enableForm, disableForm } from "../utils/helpers";
 
 import VueMessage from "./VueMessage.vue";
 import CustomSelect from "./CustomSelect.vue";
@@ -485,6 +492,7 @@ export default {
     };
 
     const newForm = () => {
+      // Reset each field manually because loop does not work
       state.name = "";
       state.surname = "";
       state.lastname = "";
@@ -507,6 +515,8 @@ export default {
       state.documentDate = "";
       state.formSubmitted = false;
       state.submitSuccess = false;
+
+      enableForm();
     };
 
     const submitForm = async () => {
@@ -544,6 +554,7 @@ export default {
       try {
         // Send the validated form to the server to create a document for the client
         state.submitSuccess = true;
+        disableForm();
       } catch (error) {
         console.error("Form submission error:", error);
       }
@@ -587,8 +598,8 @@ select {
   padding: 5px 2px;
   transition: $transition;
 
-  &:hover,
-  &:focus {
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
     border-bottom: 1px solid $focus-color;
   }
 }
@@ -611,6 +622,11 @@ input[type="checkbox"] {
   border: 2px solid $border-color;
   border-radius: 2px;
 
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    border: 2px solid $focus-color;
+  }
+
   &:checked {
     border: 2px solid $focus-color;
   }
@@ -630,6 +646,11 @@ input[type="radio"] {
   border: 2px solid $border-color;
   border-radius: 50%;
   position: relative;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    border: 2px solid $focus-color;
+  }
 
   &:before {
     content: "";
@@ -707,6 +728,19 @@ input[type="radio"] {
     gap: 10px;
   }
 
+  &__input {
+    width: 100%;
+    font-size: 14px;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    @include maxMobileSmall {
+      font-size: 12px;
+    }
+  }
+
   &__options-container {
     display: flex;
     flex-direction: column;
@@ -745,27 +779,22 @@ input[type="radio"] {
     }
   }
 
-  &__input {
-    width: 100%;
-    font-size: 14px;
-
-    @include maxMobileSmall {
-      font-size: 12px;
-    }
-  }
-
   &__btn {
     @include glassmorphism;
     padding: 12px 16px;
     margin-top: 15px;
     transition: $transition;
 
-    &--new {
+    &:hover:not(:disabled),
+    &:focus:not(:disabled) {
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 100%
+      );
+      border: 1px solid rgba($focus-color,0.5);
       color: $focus-color;
-    }
-
-    &:hover {
-      opacity: 0.8;
     }
 
     @include maxMobileSmall {

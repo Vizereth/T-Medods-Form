@@ -1,6 +1,6 @@
 <template>
-  <div class="custom-select">
-    <div class="custom-select__select" @click="toggleSelect">
+  <div class="custom-select form__input--custom">
+    <div class="custom-select__select" @click.stop="toggleSelect" tabindex="0">
       {{ state.selectedOption }}
       <span class="custom-select__arrow">&#x25BE;</span>
     </div>
@@ -18,20 +18,20 @@
 </template>
 
 <script>
-import { reactive } from "@vue/composition-api";
+import { reactive, onMounted, onUnmounted } from "@vue/composition-api";
 
 export default {
   props: {
     options: { type: Array, default: () => [] },
   },
-  setup(props, {emit}) {
+  setup(props, { emit }) {
     const state = reactive({
       isSelectOpen: false,
       selectedOption: "",
     });
 
-
-    const toggleSelect = () => {
+    const toggleSelect = (event) => {
+      event.stopPropagation();
       state.isSelectOpen = !state.isSelectOpen;
     };
 
@@ -40,6 +40,23 @@ export default {
       state.isSelectOpen = false;
       emit("update:selectedOption", option);
     };
+
+    const handleClickOutside = (event) => {
+      if (
+        state.isSelectOpen &&
+        !document.querySelector(".custom-select").contains(event.target)
+      ) {
+        state.isSelectOpen = false;
+      }
+    };
+
+    onMounted(() => {
+      document.addEventListener("click", handleClickOutside);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener("click", handleClickOutside);
+    });
 
     return { state, toggleSelect, selectOption };
   },
@@ -53,6 +70,10 @@ export default {
   cursor: pointer;
   position: relative;
   width: 100%;
+
+  &.disabled {
+    pointer-events: none;
+  }
 
   &__select {
     user-select: none;
@@ -68,7 +89,8 @@ export default {
 
     font-size: 14px;
 
-    &:hover {
+    &:hover,
+    &:focus {
       border-bottom: 1px solid $focus-color;
       color: $focus-color;
     }
@@ -110,7 +132,8 @@ export default {
     font-size: 14px;
     transition: $transition;
 
-    &:hover {
+    &:hover,
+    &:focus {
       color: $focus-color;
     }
   }
