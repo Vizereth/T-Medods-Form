@@ -522,30 +522,6 @@ export default {
     const submitForm = async () => {
       state.formSubmitted = true;
 
-      state.name = "a";
-      state.surname = "b";
-      state.lastname = "c";
-      state.birth = "d";
-      state.gender = "e";
-      state.phone = "+79999999999";
-      state.clientTypes.vip = true;
-      state.activeDoctor = "";
-      state.sms = true;
-      state.zipcode = "f";
-      state.country = "g";
-      state.region = "h";
-      state.city = "i";
-      state.street = "g";
-      state.building = "k";
-      state.document = "l";
-      state.passportSeries = "m";
-      state.passportNumber = "n";
-      state.documentGivenBy = "o";
-      state.documentDate = "p";
-
-      $v.value.$touch();
-      $v.value.$validate();
-
       if ($v.value.$invalid) {
         state.submitSuccess = false;
         return;
