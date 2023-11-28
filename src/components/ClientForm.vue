@@ -352,7 +352,7 @@
         v-if="!state.submitSuccess && $v.$invalid"
         type="submit"
         class="form__btn form__btn--submit"
-        @click="submitForm()"
+        @click.prevent="submitForm()"
       >
         Создать клиента
       </button>
