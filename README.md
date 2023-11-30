@@ -1,5 +1,9 @@
 ### Тестовое задание для Medods #1 - Form
 
+## Deploy
+
+https://sophrona.github.io/T-Medods-Form
+
 TODO:
 - Add logic to focus and select options with buttons for custom select
 - Tick checkboxes, radio buttons by pressing a button
