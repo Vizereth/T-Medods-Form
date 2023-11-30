@@ -1,4 +1,4 @@
-# form
+### Тестовое задание для Medods #1 - Form
 
 TODO:
 - Add logic to focus and select options with buttons for custom select
@@ -10,20 +10,17 @@ TODO:
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Compiles and hot-reloads for development
 ```
 npm run dev
 ```
 
-### Compiles and minifies for production
+## Compiles and minifies for production
 ```
 npm run build
 ```
 
-### Lints and fixes files
+## Lints and fixes files
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
