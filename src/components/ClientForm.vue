@@ -603,14 +603,16 @@ input[type="checkbox"] {
     border: 2px solid $focus-color;
   }
 
-  &:checked {
-    border: 2px solid $focus-color;
-  }
-
   &:checked:before {
     content: "\2713";
-    color: $focus-color;
+    color: $text-color;
     font-size: 12px;
+    transition: $transition;
+  }
+
+  &:hover:not(:disabled):before,
+  &:focus:not(:disabled):before {
+    color: $focus-color;
   }
 }
 
@@ -623,11 +625,6 @@ input[type="radio"] {
   border-radius: 50%;
   position: relative;
 
-  &:hover:not(:disabled),
-  &:focus:not(:disabled) {
-    border: 2px solid $focus-color;
-  }
-
   &:before {
     content: "";
     position: absolute;
@@ -637,16 +634,27 @@ input[type="radio"] {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: $focus-color;
+    background-color: $text-color;
     display: none;
+    transition: $transition;
   }
 
   &:checked {
-    border: 2px solid $focus-color;
+    border: 2px solid $text-color;
   }
 
   &:checked:before {
     display: flex;
+  }
+
+  &:hover,
+  &:focus {
+    border: 2px solid $focus-color;
+  }
+
+  &:hover:before,
+  &:focus:before {
+    background-color: $focus-color;
   }
 }
 
@@ -769,7 +777,7 @@ input[type="radio"] {
         transparent 50%,
         rgba(255, 255, 255, 0.15) 100%
       );
-      border: 1px solid rgba($focus-color,0.5);
+      border: 1px solid rgba($focus-color, 0.5);
       color: $focus-color;
     }
 

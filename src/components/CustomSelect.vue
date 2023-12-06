@@ -1,14 +1,24 @@
 <template>
-  <div class="custom-select form__input--custom">
-    <div class="custom-select__select" @click.stop="toggleSelect" tabindex="0">
+  <div
+    ref="domRef"
+    tabindex="0"
+    class="custom-select form__input--custom"
+    :class="{
+      'custom-select--focused': state.isFocused,
+    }"
+  >
+    <div class="custom-select__select" @click.stop="toggleSelect">
       {{ state.selectedOption }}
       <span class="custom-select__arrow">&#x25BE;</span>
     </div>
-    <div v-if="state.isSelectOpen" class="custom-select__options">
+    <div v-if="state.isOpen" class="custom-select__options">
       <div
         v-for="(option, index) in options"
         :key="index"
         @click="selectOption(option)"
+        :class="{
+          'custom-select__option--focused': state.focusedOptionIndex === index,
+        }"
         class="custom-select__option"
       >
         {{ option }}
@@ -18,47 +28,119 @@
 </template>
 
 <script>
-import { reactive, onMounted, onUnmounted } from "@vue/composition-api";
+import { ref, reactive, onMounted, onUnmounted } from "@vue/composition-api";
 
 export default {
   props: {
     options: { type: Array, default: () => [] },
   },
   setup(props, { emit }) {
+    const domRef = ref(null);
     const state = reactive({
-      isSelectOpen: false,
+      options: props.options,
+      isOpen: false,
+      isFocused: false,
       selectedOption: "",
+      focusedOptionIndex: 0,
     });
 
     const toggleSelect = (event) => {
       event.stopPropagation();
-      state.isSelectOpen = !state.isSelectOpen;
+      state.isOpen = !state.isOpen;
+      state.focusedOptionIndex = 0;
     };
 
     const selectOption = (option) => {
       state.selectedOption = option;
-      state.isSelectOpen = false;
+      state.isOpen = false;
       emit("update:selectedOption", option);
+    };
+
+    const handleKeyPress = (event) => {
+      if (!state.isOpen && event.key === "Enter") {
+        event.preventDefault();
+        state.isOpen = true;
+        return;
+      }
+
+      if (state.isOpen) {
+        switch (event.key) {
+          case "Enter":
+            event.preventDefault();
+            confirmOption();
+            break;
+          case "ArrowUp":
+            event.preventDefault();
+            navigateOptions(-1); 
+            break;
+          case "ArrowDown":
+            event.preventDefault();
+            navigateOptions(1); 
+            break;
+          case "Escape":
+            closeSelect();
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    const navigateOptions = (direction) => {
+      const totalOptions = state.options.length;
+
+      if (totalOptions === 0) return;
+
+      state.focusedOptionIndex =
+        (state.focusedOptionIndex + direction + totalOptions) % totalOptions;
+    };
+
+    const confirmOption = () => {
+      const focusedOption = state.options.find(
+        (option, index) => index === state.focusedOptionIndex
+      );
+      if (focusedOption) {
+        selectOption(focusedOption);
+      }
     };
 
     const handleClickOutside = (event) => {
       if (
-        state.isSelectOpen &&
+        state.isOpen &&
         !document.querySelector(".custom-select").contains(event.target)
       ) {
-        state.isSelectOpen = false;
+        state.isOpen = false;
       }
     };
 
+    const handleFocus = () => {
+      state.isFocused = true;
+    };
+
+    const handleBlur = () => {
+      state.isOpen = false;
+      state.isFocused = false;
+    };
+
+    const closeSelect = () => {
+      state.isOpen = false;
+    };
+
     onMounted(() => {
-      document.addEventListener("click", handleClickOutside);
+      domRef.value.addEventListener("blur", handleBlur);
+      domRef.value.addEventListener("focus", handleFocus);
+      domRef.value.addEventListener("keydown", handleKeyPress);
+      domRef.value.addEventListener("click", handleClickOutside);
     });
 
     onUnmounted(() => {
-      document.removeEventListener("click", handleClickOutside);
+      domRef.value.removeEventListener("blur", handleBlur);
+      domRef.value.removeEventListener("focus", handleFocus);
+      domRef.value.removeEventListener("keydown", handleKeyPress);
+      domRef.value.removeEventListener("click", handleClickOutside);
     });
 
-    return { state, toggleSelect, selectOption };
+    return { state, domRef, toggleSelect, selectOption };
   },
 };
 </script>
@@ -70,6 +152,13 @@ export default {
   cursor: pointer;
   position: relative;
   width: 100%;
+
+  &--focused {
+    .custom-select__select {
+      border-bottom: 1px solid $focus-color;
+      color: $focus-color;
+    }
+  }
 
   &.disabled {
     pointer-events: none;
@@ -89,8 +178,7 @@ export default {
 
     font-size: 14px;
 
-    &:hover,
-    &:focus {
+    &:hover {
       border-bottom: 1px solid $focus-color;
       color: $focus-color;
     }
@@ -133,7 +221,7 @@ export default {
     transition: $transition;
 
     &:hover,
-    &:focus {
+    &--focused {
       color: $focus-color;
     }
   }
