@@ -2,7 +2,7 @@
 
 ## Deploy
 
-https://sophrona.github.io/T-Medods-Form
+https://vizereth.github.io/T-Medods-Form
 
 ## Project setup
 ```
